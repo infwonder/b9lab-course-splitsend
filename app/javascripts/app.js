@@ -21,24 +21,57 @@ function refreshBalance(account) {
   });
 };
 
-function sendCoin() {
-  var ss = SplitSend.deployed();
-
+function addCoin() {
   var amount = parseInt(document.getElementById("amount").value);
   var amountWei = web3._extend.utils.toWei(amount, 'ether');
 
   setStatus("Initiating transaction... (please wait)");
 
+  web3.eth.sendTransaction({from: accounts[0], to: ss_addr, value: amountWei}, function(err, txhash) {
+      if (err != null) {
+        console.log(err);
+        setStatus("Error sending coin; see log.");
+      }
 
-  ss.getWei(accounts[1], accounts[2], amountWei, {from: accounts[0], to: ss_addr, value: amountWei}).then(function() {
-    setStatus("Transaction complete!");
-    refreshBalance(ss_addr);
-    refreshBalance(accounts[0]);
-    refreshBalance(accounts[1]);
-    refreshBalance(accounts[2]);
-  }).catch(function(e) {
-    console.log(e);
-    setStatus("Error sending coin; see log.");
+      web3.eth.getTransactionReceipt(txhash, function(err, data) {
+        if (err != null) {
+          console.log(err);
+          setStatus("Error sending coin; see log.");
+        }
+
+        setStatus("Transaction complete!");
+        refreshBalance(ss_addr);
+        refreshBalance(accounts[0]);
+        refreshBalance(accounts[1]);
+        refreshBalance(accounts[2]);
+      });
+  });
+};
+
+function flushCoin() {
+  var ss = SplitSend.deployed();
+  web3.eth.getBalance(ss_addr, function(err, value) {
+
+    if (err != null) {
+      console.log(err);
+      setStatus("Error sending coin; see log.");
+    } else if (value == 0) {
+      setStatus("Nothing to be sent ...");
+      return;
+    }
+
+    setStatus("Initiating transaction... (please wait)");
+
+    ss.sendWei(accounts[1], accounts[2], {from: accounts[0]}).then(function() {
+      setStatus("Transaction complete!");
+      refreshBalance(ss_addr);
+      refreshBalance(accounts[0]);
+      refreshBalance(accounts[1]);
+      refreshBalance(accounts[2]);
+    }).catch(function(e) {
+      console.log(e);
+      setStatus("Error sending coin; see log.");
+    });
   });
 };
 

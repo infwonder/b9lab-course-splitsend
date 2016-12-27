@@ -2,19 +2,18 @@ pragma solidity ^0.4.4;
 
 contract SplitSend {
     address owner;
-    bool    good;
 
-    function SplitSend(address recipient) payable {
+    function SplitSend() payable {
         owner = msg.sender;
-        good = owner.send(2000000000000000000);
     }
 
-    function getBalance() returns (uint) {
-         return address(this).balance;
-    }
+    function sendWei(address toWhom1, address toWhom2) payable returns (bool) {
+        uint256 sendAmount;
+        sendAmount = address(this).balance;
 
-    function getWei(address toWhom1, address toWhom2, uint256 sendAmount) payable returns (bool) {
-        return toWhom1.send(sendAmount / 2) && toWhom2.send(sendAmount / 2);
+        if (sendAmount > 0) {
+            return toWhom1.send(sendAmount / 2) && toWhom2.send(sendAmount / 2);
+        }
     }
 
     function killMe() {

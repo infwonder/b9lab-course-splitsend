@@ -14,7 +14,8 @@
  <br>
   <h1>Send</h1>
   <br><label for="amount">Amount:</label><input type="text" id="amount" placeholder="e.g., 95"></input>
-  <br><br><button id="send" onclick="sendCoin()">Send Ether</button>
+  <br><br><button id="send" onclick="addCoin()">Send Ether to contract only</button>
+  <br><br><button id="send" onclick="flushCoin()">Split Send Ether currently owned by contract</button>
  <br><br>
  <span id="status"></span>
 </body>
