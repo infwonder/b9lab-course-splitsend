@@ -2,10 +2,14 @@ pragma solidity ^0.4.4;
 
 contract SplitSend {
     address owner;
+    address beneficiary_one;
+    address beneficiary_two;
     bool locked;
 
-    function SplitSend() payable {
+    function SplitSend(address toWhom1, address toWhom2) payable {
         owner = msg.sender;
+        beneficiary_one = toWhom1;
+        beneficiary_two = toWhom2;
     }
 
     modifier OwnerOnly() {
@@ -20,15 +24,10 @@ contract SplitSend {
       locked = false;
     }
 
-    function sendWei(address toWhom1, address toWhom2) payable OwnerOnly NoReentrancy returns (bool) {
-        uint256 sendAmount;
-        sendAmount = msg.value;
-
-        if ( sendAmount > 0 && sendAmount % 2 == 0 ) {
-            return toWhom1.send(sendAmount / 2) && toWhom2.send(sendAmount / 2);
-        } else {
-            return false;
-        }
+    function sendWei() payable OwnerOnly NoReentrancy returns (bool) {
+        uint256 totalAmount = msg.value;
+        uint256 sendAmount  = (totalAmount - (totalAmount % 2)) / 2;
+        if ( sendAmount > 0 && beneficiary_one.send(sendAmount) && beneficiary_two.send(sendAmount) ) { return true; } else { throw; } 
     }
 
     function killMe() OwnerOnly {

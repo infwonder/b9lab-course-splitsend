@@ -29,7 +29,7 @@ function flushCoin() {
 
   setStatus("Initiating transaction... (please wait)");
 
-  ss.sendWei(accounts[1], accounts[2], {from: accounts[0], value: amountWei}).then(function() {
+  ss.sendWei({from: accounts[0], value: amountWei}).then(function() {
     setStatus("Transaction complete!");
     refreshBalance(ss_addr);
     refreshBalance(accounts[0]);
