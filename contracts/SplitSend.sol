@@ -25,8 +25,7 @@ contract SplitSend {
     }
 
     function sendWei() payable OwnerOnly NoReentrancy returns (bool) {
-        uint256 totalAmount = msg.value;
-        uint256 sendAmount  = (totalAmount - (totalAmount % 2)) / 2;
+        uint sendAmount  = (msg.value - (msg.value % 2)) / 2;
         if ( sendAmount > 0 && beneficiary_one.send(sendAmount) && beneficiary_two.send(sendAmount) ) { return true; } else { throw; } 
     }
 
